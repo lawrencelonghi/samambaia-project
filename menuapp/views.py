@@ -12,4 +12,4 @@ def menu(request):
     # Get all categories with their related items
     categorias = Categoria.objects.prefetch_related('produtos').all()
     
-    return render(request, 'menu.html', categorias.data)
+    return render(request, 'menuapp/menu.html', { 'categorias': categorias })
