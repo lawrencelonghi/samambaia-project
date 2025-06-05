@@ -37,7 +37,7 @@
         </header>
         <main class="box-content-bottom">
           {% for categoria in categorias %}
-            <section id="{{ index }}">
+            <section id="{{ categoria.name|slugify }}">
               <div>
                 <p class="categoria">{{ categoria.name }}</p>
               </div>

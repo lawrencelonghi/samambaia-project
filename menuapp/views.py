@@ -1,15 +1,28 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.views import View
-from .models import Produto
-from .models import Categoria
-
-
-def hello(request):
-    return HttpResponse('hello world')
+from .models import Categoria, Produto
+from django.db.models import Case, When, IntegerField, Value
 
 def menu(request):
-    # Get all categories with their related items
-    categorias = Categoria.objects.prefetch_related('produtos').all()
+    # Define the exact desired order of categories
+    desired_order = [
+        'Porções',
+        'Acepipes',
+        'Lanches',
+        'Doces',
+        'Drinks',
+        'Cervejas',
+        'Vinhos',
+        'Bebidas',
+        'Almoço'
+    ]
     
-    return render(request, 'menuapp/menu.html', { 'categorias': categorias })
+    # Create conditional ordering
+    categorias = Categoria.objects.annotate(
+        custom_order=Case(
+            *[When(name=name, then=Value(index)) 
+              for index, name in enumerate(desired_order)],
+            output_field=IntegerField()
+        )
+    ).order_by('custom_order')
+    
+    return render(request, 'menuapp/menu.html', {'categorias': categorias})
