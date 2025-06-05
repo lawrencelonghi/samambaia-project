@@ -14,7 +14,7 @@ class Produto(models.Model):
   price = models.IntegerField()
   description = models.CharField(max_length=255)
   categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True,related_name='produtos')
-  image = models.ImageField(upload_to='produtos/', blank=True, null=True)  # Add this fiel
+  image = models.ImageField(upload_to='produtos/', blank=True, null=True)  
 
   def __str__(self):
     return self.name

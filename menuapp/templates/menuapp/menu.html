@@ -36,17 +36,17 @@
           
         </header>
         <main class="box-content-bottom">
-          {% for index, categoria in categorias %}
+          {% for categoria in categorias %}
             <section id="{{ index }}">
               <div>
                 <p class="categoria">{{ categoria.name }}</p>
               </div>
-              {% for produto in categoria.produtos %}
+              {% for produto in categoria.produtos.all %}
                 <div class="menu-items box-container">
                   <div class="item box-container">
                     <img
                       class="item-img"
-                      src="{% static 'img/produtos/' %}{{ produto.image }}"
+                      src="{{ produto.image.url }}"
                       alt=""
                     />
                     <div class="item-text">
