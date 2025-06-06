@@ -44,11 +44,15 @@
               {% for produto in categoria.produtos.all %}
                 <div class="menu-items box-container">
                   <div class="item box-container">
+                    {% if produto.image and produto.image.url %}
                     <img
                       class="item-img"
                       src="{{ produto.image.url }}"
-                      alt=""
+                      alt="{{ produto.name }}"
                     />
+                    {% else %}
+                     <img src="{% static 'SEMFOTO.JPG' %}" alt="No image" class="item-img">
+                    {% endif %}
                     <div class="item-text">
                       <h2>{{ produto.name }}</h2>
                       <p>{{ produto.description }}</p>

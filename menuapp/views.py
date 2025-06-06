@@ -3,7 +3,6 @@ from .models import Categoria, Produto
 from django.db.models import Case, When, IntegerField, Value
 
 def menu(request):
-    # Define the exact desired order of categories
     desired_order = [
         'Porções',
         'Acepipes',
@@ -16,7 +15,7 @@ def menu(request):
         'Almoço'
     ]
     
-    # Create conditional ordering
+
     categorias = Categoria.objects.annotate(
         custom_order=Case(
             *[When(name=name, then=Value(index)) 
