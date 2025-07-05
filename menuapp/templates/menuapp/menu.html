@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0 viewport-fit=cover"
+    />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <title>Samambaia</title>
+  </head>
+  <body>
+    <header class="header">
+      <img
+        class="img-logo"
+        src="{% static 'logo samambaia cinza.png' %}"
+        alt="samambaia bar e lanches"
+      />
+    </header>
+
+    <main class="box-section">
+        <header class="box-content-top">
+          
+          <nav class="nav-list">
+            <button class="nav-btn"><a href="#porcoes">Porções</a></button>
+            <button class="nav-btn"><a href="#acepipes">Acepipes</a></button>
+            <button class="nav-btn"><a href="#lanches">Lanches</a></button>
+            <button class="nav-btn"><a href="#doces">Doces</a></button>
+            <button class="nav-btn"><a href="#drinks">Drinks</a></button>
+            <button class="nav-btn"><a href="#cervejas">Cervejas</a></button>
+            <button class="nav-btn"><a href="#vinhos">Vinhos</a></button>
+            <button class="nav-btn"><a href="#bebidas">Bebidas</a></button>
+            <button class="nav-btn"><a href="#almoco">Almoço</a></button>
+          </nav>
+          
+        </header>
+        <main class="box-content-bottom">
+          {% for categoria in categorias %}
+            <section id="{{ categoria.name|slugify }}">
+              <div>
+                <p class="categoria">{{ categoria.name }}</p>
+              </div>
+              {% for produto in categoria.produtos.all %}
+                <div class="menu-items box-container">
+                  <div class="item box-container">
+                    {% if produto.image and produto.image.url %}
+                    <img
+                      class="item-img"
+                      src="{{ produto.image.url }}"
+                      alt="{{ produto.name }}"
+                    />
+                    {% else %}
+                     <img src="{% static 'SEMFOTO.JPG' %}" alt="No image" class="item-img">
+                    {% endif %}
+                    <div class="item-text">
+                      <h2>{{ produto.name }}</h2>
+                      <p>{{ produto.description }}</p>
+                      <span>R$ {{ produto.price }}</span>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </section>
+          {% endfor %}
+        </main>
+    </main>
+
+    <script src="{% static 'script.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll@16.1.3/dist/smooth-scroll.polyfills.min.js"></script>
+  </body>
+</html>
