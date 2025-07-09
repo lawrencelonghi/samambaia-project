@@ -15,20 +15,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN mkdir /root/.local
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh   
+
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN /root/.cargo/bin/uv pip install --no-cache-dir -r requirements.txt
+RUN /root/.local/bin/uv pip install --no-cache-dir --system -r requirements.txt 
+RUN /root/.local/bin/uv pip install --no-cache-dir --system gunicorn 
+
 
 # Copy project files
 COPY . .
 
+
 # Collect static files (if needed)
-# RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
 
 # Expose the port the app runs on
 EXPOSE 8000
 
 # Command to run the application
-#CMD ["gunicorn", "--bind", "0.0.0.0:8000", "your_project.wsgi:application"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "your_project.wsgi:application"]
