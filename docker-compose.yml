@@ -13,9 +13,10 @@ services:
     restart: unless-stopped
 
   prod:
-  
     build: .
     command: sh -c "python manage.py migrate && gunicorn -w 4 --bind 0.0.0.0:8000 core.wsgi:application"
+    volumes:
+      - .:/app
     ports:
       - "8000:8000"
     env_file:
@@ -23,3 +24,17 @@ services:
     profiles:
       - prod
     restart: unless-stopped
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAINS: 'samabmaiabar.com.br -> http://prod:8000'
+      STAGE: 'staging'
+      # STAGE: 'production' # Don't use production until staging works
+    volumes:
+      - https-portal-data:/var/lib/https-portal
+    profiles:
+      - prod
