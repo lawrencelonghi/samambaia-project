@@ -38,3 +38,6 @@ services:
       - https-portal-data:/var/lib/https-portal
     profiles:
       - prod
+
+volumes:
+  https-portal-data:
