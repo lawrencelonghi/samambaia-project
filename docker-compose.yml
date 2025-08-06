@@ -31,7 +31,7 @@ services:
       - '80:80'
       - '443:443'
     environment:
-      DOMAINS: 'samabmaiabar.com.br -> http://prod:8000'
+      DOMAINS: 'samambaiabar.com.br -> http://prod:8000'
       STAGE: 'production'
       # STAGE: 'production' # Don't use production until staging works
     volumes:
