@@ -32,7 +32,7 @@ services:
       - '443:443'
     environment:
       DOMAINS: 'samabmaiabar.com.br -> http://prod:8000'
-      STAGE: 'staging'
+      STAGE: 'production'
       # STAGE: 'production' # Don't use production until staging works
     volumes:
       - https-portal-data:/var/lib/https-portal
