@@ -1,27 +1,43 @@
 services:
+  web:
+    build: .
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    profiles:
+      - dev
+    restart: unless-stopped
+
   prod:
     build: .
     command: sh -c "python manage.py migrate && gunicorn -w 4 --bind 0.0.0.0:8000 core.wsgi:application"
     volumes:
       - .:/app
-      - ./media:/app/media
-    expose:
-      - "8000"
+    ports:
+      - "8000:8000"
     env_file:
       - .env
+    profiles:
+      - prod
     restart: unless-stopped
+
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAINS: 'samambaiabar.com.br -> http://prod:8000'
+      STAGE: 'production'
+      # STAGE: 'production' # Don't use production until staging works
+    volumes:
+      - https-portal-data:/var/lib/https-portal
     profiles:
       - prod
 
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./media:/app/media
-    depends_on:
-      - prod
-    restart: unless-stopped
-    profiles:
-      - prod
+volumes:
+  https-portal-data:
