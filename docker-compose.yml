@@ -1,49 +1,43 @@
-version: "3.9"
-
 services:
-  prod:
+  web:
     build: .
-    command: >
-      sh -c "python manage.py migrate &&
-             gunicorn -w 4 --bind 0.0.0.0:8000 core.wsgi:application"
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
-      - media-data:/app/media  # sincroniza a mídia do container Django para persistência
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    profiles:
+      - dev
+    restart: unless-stopped
+
+  prod:
+    build: .
+    command: sh -c "python manage.py migrate && gunicorn -w 4 --bind 0.0.0.0:8000 core.wsgi:application"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
     env_file:
       - .env
     profiles:
       - prod
     restart: unless-stopped
-    expose:
-      - 8000
-
-  media-nginx:
-    image: nginx:alpine
-    volumes:
-      - media-data:/usr/share/nginx/html/media:ro  # mesma pasta de mídia compartilhada, só leitura para Nginx
-      - ./nginx/media.conf:/etc/nginx/conf.d/default.conf:ro
-    profiles:
-      - prod
-    restart: unless-stopped
-    expose:
-      - 80
 
   https-portal:
     image: steveltn/https-portal:1
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     environment:
-      DOMAINS: |
-        samambaiabar.com.br -> http://prod:8000
-        samambaiabar.com.br/media -> http://media-nginx:80
-      STAGE: production
+      DOMAINS: 'samambaiabar.com.br -> http://prod:8000'
+      STAGE: 'production'
+      # STAGE: 'production' # Don't use production until staging works
     volumes:
       - https-portal-data:/var/lib/https-portal
     profiles:
       - prod
-    restart: unless-stopped
 
 volumes:
   https-portal-data:
-  media-data:
