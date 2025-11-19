@@ -144,26 +144,6 @@ docker-compose --profile prod restart
 
 A configuração de produção utiliza HTTPS Portal para gerenciamento automático de certificados SSL via Let's Encrypt. Os certificados são renovados automaticamente.
 
-## Suporte a Navegadores
-
-- Chrome (recommended)
-- Firefox
-- Safari
-- Edge
-- Navegadores mobile (iOS Safari, Chrome Mobile)
-
-## Contribuindo
-
-Contribuições são bem-vindas! Sinta-se à vontade para enviar um Pull Request.
-
-## Licença
-
-Este projeto é privado e proprietário do Samambaia Bar.
-
-## Contato
-
-Para dúvidas ou suporte, entre em contato com a equipe de desenvolvimento.
-
 ---
 
-Desenvolvido para o Samambaia Bar
+Desenvolvido para o Samambaia Bar e lanches
