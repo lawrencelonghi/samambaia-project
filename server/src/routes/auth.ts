@@ -21,7 +21,7 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     //buscar usuario admin
-    const admin = await prisma.admin.findUnique({ where: username})
+    const admin = await prisma.admin.findUnique({ where: {username}})
 
     if(!admin) {
       return res.status(401).json({ error: 'credenciais invalidas'})
@@ -62,7 +62,7 @@ router.post('/login', async (req: Request, res: Response) => {
   router.get('/me', async (req: Request, res: Response) => {
     try {
        //remove prefixo Bearer do token 
-    const token = req.headers.authorization?.replace('Bearer', '')
+    const token = req.headers.authorization?.replace('Bearer ', '')
 
     if(!token) {
       return res.status(401).json({ error: 'nao autorizado' });
