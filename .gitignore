@@ -1,0 +1,18 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Environment variables
+.env
+**/.env
+
+# Build outputs
+dist/
+**/dist/
+
+# Database files
+*.db
+*.db-journal
+
+# Generated files
+/src/generated/prisma
