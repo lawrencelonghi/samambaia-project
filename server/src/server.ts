@@ -19,7 +19,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/categories', categoriesRoutes)
-app.use('/api/products', productsRoutes)
+app.use('/api/categories', productsRoutes)
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${PORT}`)
