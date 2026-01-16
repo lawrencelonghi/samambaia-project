@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Dashboard</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1>Gerenciar Cardápio</h1>
+            <button class="btn-secondary" id="logoutBtn">Sair</button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Seção de Categorias -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Categorias</h2>
+                    <button class="btn-primary" id="addCategoryBtn">+ Nova Categoria</button>
+                </div>
+                
+                <div class="categories-list" id="categoriesList">
+                    <!-- Exemplo de categoria -->
+                    <div class="category-item">
+                        <span class="category-name">Bebidas</span>
+                        <div class="category-actions">
+                            <button class="btn-icon btn-edit" title="Editar">✏️</button>
+                            <button class="btn-icon btn-delete" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="category-item">
+                        <span class="category-name">Lanches</span>
+                        <div class="category-actions">
+                            <button class="btn-icon btn-edit" title="Editar">✏️</button>
+                            <button class="btn-icon btn-delete" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção de Produtos -->
+            <section class="section">
+                <div class="section-header">
+                    <h2>Produtos</h2>
+                    <button class="btn-primary" id="addProductBtn">+ Novo Produto</button>
+                </div>
+                
+                <div class="products-grid" id="productsList">
+                    <!-- Exemplo de produto -->
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x150" alt="Produto" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-title">Hambúrguer Artesanal</h3>
+                            <p class="product-description">Pão artesanal, carne 180g, queijo, alface e tomate</p>
+                            <p class="product-price">R$ 25,90</p>
+                            <span class="product-category">Lanches</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-icon btn-edit" title="Editar">✏️</button>
+                            <button class="btn-icon btn-delete" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x150" alt="Produto" class="product-image">
+                        <div class="product-info">
+                            <h3 class="product-title">Suco Natural de Laranja</h3>
+                            <p class="product-description">500ml de suco natural gelado</p>
+                            <p class="product-price">R$ 8,00</p>
+                            <span class="product-category">Bebidas</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-icon btn-edit" title="Editar">✏️</button>
+                            <button class="btn-icon btn-delete" title="Excluir">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para adicionar/editar Categoria -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Categoria</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form class="modal-form" id="categoryForm">
+                <div class="form-group">
+                    <label for="categoryName">Nome da Categoria</label>
+                    <input type="text" id="categoryName" name="categoryName" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelCategoryBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar/editar Produto -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Produto</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <form class="modal-form" id="productForm">
+                <div class="form-group">
+                    <label for="productCategory">Categoria</label>
+                    <select id="productCategory" name="productCategory" required>
+                        <option value="">Selecione uma categoria</option>
+                        <option value="bebidas">Bebidas</option>
+                        <option value="lanches">Lanches</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productTitle">Título</label>
+                    <input type="text" id="productTitle" name="productTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productDescription">Descrição</label>
+                    <textarea id="productDescription" name="productDescription" rows="3" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productPrice">Preço (R$)</label>
+                    <input type="number" id="productPrice" name="productPrice" step="0.01" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productImage">Imagem</label>
+                    <input type="file" id="productImage" name="productImage" accept="image/*">
+                    <small>Formatos aceitos: JPG, PNG, WebP</small>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelProductBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/adminDashboard.js"></script>
+</body>
+</html>
