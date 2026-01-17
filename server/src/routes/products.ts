@@ -15,12 +15,6 @@ router.post('/:categoryId/products', authMiddleware,
 
     try {
 
-            console.log('=== DEBUG ===');
-      console.log('req.file:', req.file);
-      console.log('req.body:', req.body);
-      console.log('req.params:', req.params);
-      console.log('============');
-
       const categoryId = req.params.categoryId
       const file = req.file as Express.Multer.File
       const { title, description, price } = req.body
