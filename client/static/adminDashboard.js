@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       showNotification('Categoria criada com sucesso!', 'success');
       closeCategoryModal();
-      loadCategories(); // atualiza categorias
+      loadCategories();
 
     } catch (error) {
       showNotification(error.message || 'Erro ao criar categoria', 'error');
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const data = await response.json();
       showNotification(`Categoria excluída! ${data.productsDeleted} produto(s) também foram removidos.`, 'success');
-      loadCategories();
+     await loadCategories();
 
     } catch (error) {
       showNotification(error.message || 'Erro ao excluir categoria', 'error');
@@ -240,7 +240,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.body.appendChild(notification);
 
-    // remover notificacao após 4 segundos
     setTimeout(() => {
       notification.classList.add('fade-out');
       setTimeout(() => notification.remove(), 300);
@@ -261,19 +260,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const cancelProductBtn = document.getElementById('cancelProductBtn')
   const productModal = document.getElementById('productModal')
   const selectProductCategory = document.getElementById('selectProductCategory')
+  const editBtn = document.getElementById('editBtn')  
 
   addProductBtn.addEventListener('click', openProductModal)
   cancelProductBtn.addEventListener('click', closeProductModal)
   productForm.addEventListener('submit', handleProductSubmit)
 
-
   function openProductModal(e) {
     addProductModal.classList.add('active')
   }
 
-  function closeProductModal(e){
-    addProductModal.classList.remove('active')
-  }
   selectCategories()
 
   async function selectCategories() {
@@ -293,99 +289,148 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
- function displaySelectCategories(categoriesOptions) {
-  
-  if (categoriesOptions.length === 0){
-    selectProductCategory.innerHTML = '<option value="">Nenhuma categoria</option>'
-    return
+  function displaySelectCategories(categoriesOptions) {
+    if (categoriesOptions.length === 0){
+      selectProductCategory.innerHTML = '<option value="">Nenhuma categoria</option>'
+      return
+    }
+
+    selectProductCategory.innerHTML = categoriesOptions.map(category => `
+      <option value="${category.id}">${category.title}</option>
+    `).join('')
   }
 
-  selectProductCategory.innerHTML = categoriesOptions.map(category => `
-    <option value="${category.id}">${category.title}</option>
+  async function handleProductSubmit(e) {
+    e.preventDefault()
+    
+    try {
+      const productCategory = selectProductCategory.value
+      const productTitle = document.getElementById('productTitle').value    
+      const productDescription = document.getElementById('productDescription').value  
+      const productPrice = document.getElementById('productPrice').value 
+      const productImageInput = document.getElementById('productImage')
+      const token = window.localStorage.getItem('authToken')
+
+      if (!productTitle || !productPrice) {
+        showNotification('Por favor, insira um nome e o preço', 'error');
+        return;
+      }
+
+      if (!productImageInput.files || !productImageInput.files[0]) {
+        showNotification('Por favor, selecione uma imagem', 'error');
+        return;
+      }
+
+      const formData = new FormData()
+      formData.append('title', productTitle)
+      formData.append('description', productDescription)
+      formData.append('price', productPrice)
+      formData.append('image', productImageInput.files[0])
+
+      const response = await fetch(`/api/categories/${productCategory}/products`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        let errorMessage = 'Erro ao criar produto';
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch {
+          errorMessage = `Erro ${response.status}: ${response.statusText}`
+        }
+        throw new Error(errorMessage)
+      }
+
+      const data = await response.json()
+      
+      await loadProducts()
+      showNotification('Produto criado com sucesso!', 'success')
+      closeProductModal()
+      productForm.reset()
+      
+    } catch (error) {
+      console.error('Erro ao criar produto:', error)
+      showNotification(error.message, 'error')
+    }
+  }
+
+  loadProducts()
+
+  async function loadProducts() {
+    try {
+      const response = await fetch('/api/products')
+      if(!response.ok) {
+        throw new Error('Erro ao carregar produtos');
+      }
+
+      const products = await response.json()
+      displayProducts(products)
+
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error);
+      showNotification('Erro ao carregar produtos', 'error');
+    }
+  }
+
+  // ← MOVA ESTAS FUNÇÕES PARA DENTRO (antes do fechamento do DOMContentLoaded)
+  function displayProducts(products) {
+    const productsList = document.getElementById('productsList')
+    
+    productsList.innerHTML = products.map(product => `
+      <div class="product-card">
+        <img src="uploads/${product.filename}" alt="Produto" class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">${product.title}</h3>
+          <p class="product-description">${product.description}</p>
+          <p class="product-price">R$ ${product.price}</p>
+          <span class="product-category">${product.category.title}</span>
+        </div>
+        <div class="product-actions">
+          <button class="btn-icon btn-delete" data-product-id="${product.id}" title="Excluir">Excluir</button>
+        </div>
+      </div>
     `).join('')
 
- }
+    document.querySelectorAll('.btn-delete').forEach(b => {
+      b.addEventListener('click', async (e) =>{
+        e.preventDefault()
+        await deleteProduct(b.dataset.productId)
+      } )
+    })
+  }
 
-async function handleProductSubmit(e) {
-  e.preventDefault()
-  
-  try {
-    const productCategory = selectProductCategory.value
-    const productTitle = document.getElementById('productTitle').value    
-    const productDescription = document.getElementById('productDescription').value  
-    const productPrice = document.getElementById('productPrice').value 
-    const productImageInput = document.getElementById('productImage')
+  async function deleteProduct(productId) {
+    
+    if (!confirm('Tem certeza que deseja excluir este produto?')) {
+      return;
+    }
+
     const token = window.localStorage.getItem('authToken')
 
-   
-    if (!productTitle || !productPrice) {
-      showNotification('Por favor, insira um nome e o preço', 'error');
-      return;
-    }
-
-    if (!productImageInput.files || !productImageInput.files[0]) {
-      showNotification('Por favor, selecione uma imagem', 'error');
-      return;
-    }
-
-    const formData = new FormData()
-    formData.append('title', productTitle)
-    formData.append('description', productDescription)
-    formData.append('price', productPrice)
-    formData.append('image', productImageInput.files[0])
-
-    const response = await fetch(`/api/categories/${productCategory}/products`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
-    })
-
-    // Trate erros de forma mais amigável
-    if (!response.ok) {
-      // Tente parsear JSON, mas tenha fallback
-      let errorMessage = 'Erro ao criar produto';
-      try {
-        const errorData = await response.json()
-        errorMessage = errorData.error || errorMessage
-      } catch {
-        // Se não conseguir parsear JSON, use mensagem genérica
-        errorMessage = `Erro ${response.status}: ${response.statusText}`
+    try {
+      const response = await fetch(`/api/products/${productId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        } 
+      })
+      
+      if (!response.ok) {
+        throw new Error('Erro ao deletar produto')
       }
-      throw new Error(errorMessage)
+      
+      showNotification('Produto excluído com sucesso!', 'success')
+      await loadProducts()
+      
+    } catch (error) {
+      console.error('Erro ao deletar produto:', error)
+      showNotification('Erro ao deletar produto', 'error')
     }
-
-    const data = await response.json()
-    
-    loadProducts()
-    showNotification('Produto criado com sucesso!', 'success')
-    closeProductModal()
-    productForm.reset()
-    
-  } catch (error) {
-    console.error('Erro ao criar produto:', error)
-    showNotification(error.message, 'error')
   }
-}
 
-async function LoadProducts() {
-  try {
-    const response = await fetch('/api/products')
-    if(!response.ok) {
-      throw new Error('Erro ao carregar produtos');
-    }
-
-    const products = await response.json()
-
-    displayProducts(products)
-
-  } catch (error) {
-         console.error('Erro ao carregar produtos:', error);
-      showNotification('Erro ao carregar produtos', 'error');
-  }
-}
-});
-
-
-
+}); 

@@ -270,7 +270,6 @@ body {
 .product-price {
     font-size: 18px;
     font-weight: 700;
-    color: #27ae60;
     margin-bottom: 10px;
 }
 
@@ -361,7 +360,7 @@ body {
 }
 
 .btn-icon {
-    background: none;
+    background: rgb(227, 227, 255);
     border: none;
     font-size: 16px;
     cursor: pointer;
@@ -375,11 +374,11 @@ body {
 }
 
 .btn-edit:hover {
-    background: #fff3cd;
+    background: #ffe591;
 }
 
 .btn-delete:hover {
-    background: #f8d7da;
+    background: #ffb0b6;
 }
 
 /* ==================== MODAL ==================== */
